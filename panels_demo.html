@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+
+<script>
+
+  var activeAjaxConnections = 0;
+  var videoBlobs = [];
+  function loadVideo(url){
+
+    var req = new XMLHttpRequest();
+    req.open('GET', url , true);
+    req.responseType = 'blob';
+
+    activeAjaxConnections++;
+    req.onload = function() {
+//      debugger;
+      activeAjaxConnections--;
+      // Onload is triggered even on 404
+      // so we need to check the status code
+      if (this.status === 200) {
+        var videoBlob = this.response;
+        var vid = URL.createObjectURL(videoBlob); // IE10+
+        // Video is now downloaded
+        // and we can set it as source on the video element
+        console.log(vid);
+        videoBlobs.push(vid);
+//        document.getElementsByTagName('video')[0].style.visibility = 'visible'
+//        document.getElementsByTagName('video')[0].src = vid;
+        if (0 == activeAjaxConnections) {
+          showVideos();
+          console.log('loaded');
+        }
+      }
+    }
+    req.onerror = function() {
+      debugger;
+      activeAjaxConnections--;
+      if (0 == activeAjaxConnections) {
+        showVideos();
+        console.log('loaded');
+      }
+    }
+
+    req.send();
+  }
+
+  // load video elements with videoBlobs
+  function showVideos(){
+    let videoElements = document.querySelectorAll('video');
+    videoBlobs.forEach((blob, i)=>{
+        videoElements[i].src = blob;
+        videoElements[i].style.visibility = "visible";
+    })
+  }
+
+  //make call for 10 videos
+  var urlsArray = ['videos/home.mp4','videos/page1.mp4','videos/page2.mp4','videos/page3.mp4','videos/page4.mp4','videos/page5.mp4','videos/page6.mp4']
+  urlsArray.forEach(function(v,k){
+    loadVideo(v)
+  })
+
+</script>
+<video width="320" height="240" controls style="visibility:hidden"></video>
+<video width="320" height="240" controls style="visibility:hidden"></video>
+<video width="320" height="240" controls style="visibility:hidden"></video>
+<video width="320" height="240" controls style="visibility:hidden"></video>
+<video width="320" height="240" controls style="visibility:hidden"></video>
+<video width="320" height="240" controls style="visibility:hidden"></video>
+<video width="320" height="240" controls style="visibility:hidden"></video>
+</body>
+</html>

@@ -36,6 +36,9 @@ li {
     float: left;
     margin: 10px 5px;
 }
+nav li:last-child {
+    float: right;
+}
 .video-container,
 .video-container .filter {
     position: absolute;
